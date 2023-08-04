@@ -9,10 +9,10 @@ local uniteclient = {}
 do
     for _, v in next, getgc(true) do
         if (type(v) == 'table') then
-            if (rawget(v, 'Fire') and type(rawget(v, 'Fire')) == 'function' and not Client.Bullet) then
-                Client.Bullet = v
+            if (rawget(v, 'Fire') and type(rawget(v, 'Fire')) == 'function' and not uniteclient.Bullet) then
+                uniteclient.Bullet = v
             elseif (rawget(v, 'HiddenUpdate')) then
-                Client.Players = debug.getupvalue(rawget(v, 'new'), 9)
+                uniteclient.Players = debug.getupvalue(rawget(v, 'new'), 9)
             end
         end
     end
