@@ -737,7 +737,7 @@ end
 function EspInterface.getCharacter(player)
   for _, plrr in next, uniteclient.Players do
     if (player.Name == plrr.Name and player.PlayerModel and not player.Dead) then
-      return player.PlayerModel, plrr;
+      return plrr.PlayerModel, plrr;
     end
   end
 	return nil;
