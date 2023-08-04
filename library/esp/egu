@@ -12,6 +12,7 @@ do
             if (rawget(v, 'Fire') and type(rawget(v, 'Fire')) == 'function' and not uniteclient.Bullet) then
                 uniteclient.Bullet = v
             elseif (rawget(v, 'HiddenUpdate')) then
+		print(uniteclient)
                 uniteclient.Players = debug.getupvalue(rawget(v, 'new'), 9)
             end
         end
