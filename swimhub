@@ -104,24 +104,12 @@ if isusingfancyloader then
     print("began")
 end
 local Library, ThemeManager, SaveManager, _esplib = nil, nil, nil, nil --[[loadstring(game:HttpGet("https://raw.githubusercontent.com/SWIMHUBISWIMMING/-/main/library/esp/tsv2.lua"))()]]
-if not isfile("swimhub/library/main") or (isfile("swimhub/library/ver") and tonumber(readfile("swimhub/library/ver")) < curver) then
-    print('downloading')
+do
     local repo = 'https://raw.githubusercontent.com/SWIMHUBISWIMMING/-/main/library/'
-    makefolder("swimhub/library")
-    writefile("swimhub/library/main", game:HttpGet(repo..'main'))
-    writefile("swimhub/library/save", game:HttpGet(repo..'save'))
-    writefile("swimhub/library/theme", game:HttpGet(repo..'theme'))
-    writefile("swimhub/library/esp", game:HttpGet("https://raw.githubusercontent.com/SWIMHUBISWIMMING/-/main/library/esp/esp.lua"))
-    writefile("swimhub/library/ver", tostring(curver))
     Library = loadstring(game:HttpGet(repo..'main'))()
     ThemeManager = loadstring(game:HttpGet(repo..'theme'))()
     SaveManager = loadstring(game:HttpGet(repo..'save'))()
-    _esplib = loadstring(game:HttpGet("https://raw.githubusercontent.com/SWIMHUBISWIMMING/-/main/library/esp/esp.lua"))()
-elseif isfile("swimhub/library/main") then
-    Library = loadstring(readfile("swimhub/library/main"))()
-    ThemeManager = loadstring(readfile("swimhub/library/theme"))()
-    SaveManager = loadstring(readfile("swimhub/library/save"))()
-    _esplib = loadstring(readfile("swimhub/library/esp"))()
+    _esplib = loadstring(game:HttpGet(repo..'esp/esp.lua'))()
 end
 
 if isusingfancyloader then
@@ -691,7 +679,6 @@ local luatab = Tabs.Lua:AddRightGroupbox('swimlua');
         To = toprightpos - Vector2.new(200, -(6+3)),
         From = toprightpos - Vector2.new(0, -(6+3)),
         Thickness = 15,
-        Filled = true,
         Transparency = 0.7,
         Visible = true,
         Color = Color3.new(0,0,0),
@@ -701,7 +688,6 @@ local luatab = Tabs.Lua:AddRightGroupbox('swimlua');
         To = toprightpos - Vector2.new(200, 0),
         From = toprightpos - Vector2.new(0, 0),
         Thickness = 1,
-        Filled = true,
         Transparency = 1,
         Visible = true,
         Color = Options["watercolor"].Value,
@@ -711,7 +697,6 @@ local luatab = Tabs.Lua:AddRightGroupbox('swimlua');
         To = toprightpos - Vector2.new(200, -1),
         From = toprightpos - Vector2.new(0, -1),
         Thickness = 1,
-        Filled = true,
         Transparency = 1,
         Visible = true,
         Color = Options["watercolor"].Value,
@@ -2931,35 +2916,14 @@ end
 -- #roams
 if game.PlaceId == 12599615395 then
     pcall(function()
-        local Roams = Tabs.Main:AddLeftGroupbox(game:GetService("MarketplaceService"):GetProductInfo(12599615395).Name)
-        local function notBehindWall(target)
-            local ray = Ray.new(plr.Character.Head.Position, (target.Position - plr.Character.Head.Position).Unit * 300)
-            local ignored = {plr.Character, camera:FindFirstChildOfClass("Model"), camera:FindFirstChildOfClass("BasePart")}
-            for i, v in pairs(target.Parent:GetChildren()) do
-                if v.Name ~= target.Name then
-                    table.insert(ignored, v)
-                end
-            end
-            local part, position = game:GetService("Workspace"):FindPartOnRayWithIgnoreList(ray, ignored, false, true)
-            if part then
-                local humanoid = part.Parent:FindFirstChildOfClass("Humanoid")
-                if not humanoid then
-                    humanoid = part.Parent.Parent:FindFirstChildOfClass("Humanoid")
-                end
-                if humanoid and target and humanoid.Parent == target.Parent then
-                    local pos, visible = camera:WorldToScreenPoint(target.Position)
-                    if visible then
-                        return true
-                    end
-                end
-            end
-        end
-        local function getPlayerClosestToMouse()
+        local JailBird = Tabs.Main:AddLeftTabbox(game:GetService("MarketplaceService"):GetProductInfo(6055959032).Name)
+        local AimTab = JailBird:AddTab("aim")
+        local function GetClosest()
             local target = nil
-            local maxDist = 1000
+            local maxDist = othergames.jailbird.fovcheck and othergames.jailbird.aimfov or math.huge
             for _,v in pairs(plrs:GetPlayers()) do
                 if v.Character then
-                    if v.Character:FindFirstChild("Humanoid") and v.Character.Humanoid.Health ~= 0 and v.Character:FindFirstChild("HumanoidRootPart") and plr.Name ~= v.Name then
+                    if v.Character:FindFirstChildOfClass("Humanoid") and v.Character.Humanoid.Health ~= 0 and v.Character:FindFirstChild("HumanoidRootPart") and plr.Name ~= v.Name then
                         local pos, vis = camera:WorldToViewportPoint(v.Character.HumanoidRootPart.Position)
                         local dist = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(pos.X, pos.Y)).magnitude
                         if dist < maxDist and vis then
@@ -2971,19 +2935,17 @@ if game.PlaceId == 12599615395 then
             end
             return target
         end
-        local Target
-        RunService.RenderStepped:Connect(function()
-            Target = getPlayerClosestToMouse()
-        end)
-        Roams:AddToggle('SilentAimjb', {
+        AimTab:AddToggle('SilentAimjb', {
             Text = 'silent aim',
             Default = false,  
 
+
             Callback = function(first)
-                othergames.roams.silentaim = first
+                othergames.jailbird.silentaim = first
             end
         })
-        Roams:AddDropdown('SilentAimHitPartjb', {
+        AimTab:AddLabel("head aim part may ban")
+        AimTab:AddDropdown('SilentAimHitPartjb', {
             Values = {'HumanoidRootPart', 'Head'},
             Default = 1,
             Multi = false,
@@ -2992,17 +2954,82 @@ if game.PlaceId == 12599615395 then
             Tooltip = 'select part',
         
             Callback = function(Value)
-                othergames.roams.silentaimpart = Value
+                othergames.jailbird.silentaimpart = Value
             end
         })
+        AimTab:AddToggle('fovcheck', {
+            Text = 'fov check',
+            Default = false,  
+
+
+            Callback = function(first)
+                othergames.jailbird.fovcheck = first
+            end
+        })
+        AimTab:AddToggle('drawfov', {
+            Text = 'draw fov',
+            Default = false,  
+
+
+            Callback = function(first)
+                othergames.jailbird.drawfov = first
+            end
+        }):AddColorPicker('fovcolor', {
+            Default = Color3.new(1, 1, 1),
+            Title = 'fov color',
+            Transparency = 0,
+        
+            Callback = function(Value)
+                othergames.jailbird.fovcolor = Value
+            end
+        })
+
+        AimTab:AddToggle('fovoutline', {
+            Text = 'draw fov outline',
+            Default = false,  
+
+
+            Callback = function(first)
+                othergames.jailbird.fovoutline = first
+            end
+        })
+        AimTab:AddSlider('aimfov', {
+            Text = 'aim fov',
+
+            Default = 60,
+            Min = 0,
+            Max = 360,
+            Rounding = 0,
+
+            Compact = false,  
+        }):OnChanged(function(State)
+            othergames.jailbird.aimfov = State
+        end)
+        local Target
+        local CircleInline = Drawing.new("Circle")
+        local CircleOutline = Drawing.new("Circle")
+        CircleInline.Transparency = 1
+        CircleInline.Thickness = 1
+        CircleInline.ZIndex = 2
+        CircleOutline.Thickness = 3
+        CircleOutline.Color = Color3.new()
+        CircleOutline.ZIndex = 1
+        RunService.RenderStepped:Connect(function()
+            CircleOutline.Position = Vector2.new(mouse.X, mouse.Y + 36)
+            CircleInline.Position = Vector2.new(mouse.X, mouse.Y + 36)
+            CircleInline.Radius = othergames.jailbird.aimfov
+            CircleInline.Color = othergames.jailbird.fovcolor
+            CircleInline.Visible = othergames.jailbird.drawfov
+            CircleOutline.Radius = othergames.jailbird.aimfov
+            CircleOutline.Visible = (othergames.jailbird.drawfov and othergames.jailbird.fovoutline)
+            Target = GetClosest()
+        end)
         local Old; Old = hookmetamethod(game, "__namecall", function(Self, ...)
             local Args = {...}
-            local script =  getcallingscript()
-            if (not checkcaller() and getnamecallmethod() == "FindPartOnRayWithIgnoreList" and othergames.roams.silentaim) then
+            if (not checkcaller() and getnamecallmethod() == "FindPartOnRayWithIgnoreList" and othergames.jailbird.silentaim) then
                 if Target and Target.Character then
                     local Origin = Args[1].Origin
-                    local LOL1, LOL2, LOL3 = Target.Character[othergames.roams.silentaimpart].Position.X, Target.Character[othergames.roams.silentaimpart].Position.Y, Target.Character[othergames.roams.silentaimpart].Position.Z
-                    Args[1] = Ray.new(Origin, Vector3.new(LOL1 + (math.random(1,9999) / 10000000 - math.random(1,9999) / 10000000), LOL2 + (math.random(1,9999) / 10000000 - math.random(1,9999) / 100000000), LOL3 + (math.random(1,9999) / 100000000 - math.random(1,9999) / 100000000)) - Origin)
+                    Args[1] = Ray.new(Origin, Target.Character[othergames.jailbird.silentaimpart].Position - Origin)
                 end
             end
             return Old(Self, unpack(Args))
