@@ -7,7 +7,6 @@ local workspace = game:GetService("Workspace");
 -- variables
 local localPlayer = players.LocalPlayer;
 local camera = workspace.CurrentCamera;
-local viewportSize = camera.ViewportSize;
 local container = Instance.new("Folder",
 	gethui and gethui() or game:GetService("CoreGui"));
 runService.RenderStepped:Connect(function()
@@ -98,7 +97,7 @@ local function calculateCorners(cframe, size)
 		corners[i] = worldToScreen((cframe + size*0.5*VERTICES[i]).Position);
 	end
 
-	local min = min2(viewportSize, unpack(corners));
+	local min = min2(camera.ViewportSize, unpack(corners));
 	local max = max2(Vector2.zero, unpack(corners));
 	return {
 		corners = corners,
@@ -377,9 +376,9 @@ function EspObject:Render()
 		tracer.Transparency = options.tracerColor[2];
 		tracer.To = (corners.bottomLeft + corners.bottomRight)*0.5;
 		tracer.From =
-			options.tracerOrigin == "Middle" and viewportSize*0.5 or
-			options.tracerOrigin == "Top" and viewportSize*Vector2.new(0.5, 0) or
-			options.tracerOrigin == "Bottom" and viewportSize*Vector2.new(0.5, 1);
+			options.tracerOrigin == "Middle" and camera.ViewportSize*0.5 or
+			options.tracerOrigin == "Top" and camera.ViewportSize*Vector2.new(0.5, 0) or
+			options.tracerOrigin == "Bottom" and camera.ViewportSize*Vector2.new(0.5, 1);
 
 		local tracerOutline = visible.tracerOutline;
 		tracerOutline.Color = parseColor(self, options.tracerOutlineColor[1], true);
@@ -392,7 +391,7 @@ function EspObject:Render()
 	hidden.arrowOutline.Visible = hidden.arrow.Visible and options.offScreenArrowOutline;
 	if hidden.arrow.Visible and self.direction then
 		local arrow = hidden.arrow;
-		arrow.PointA = min2(max2(viewportSize*0.5 + self.direction*options.offScreenArrowRadius, Vector2.one*25), viewportSize - Vector2.one*25);
+		arrow.PointA = min2(max2(camera.ViewportSize*0.5 + self.direction*options.offScreenArrowRadius, Vector2.one*25), camera.ViewportSize - Vector2.one*25);
 		arrow.PointB = arrow.PointA - rotateVector(self.direction, 0.45)*options.offScreenArrowSize;
 		arrow.PointC = arrow.PointA - rotateVector(self.direction, -0.45)*options.offScreenArrowSize;
 		arrow.Color = parseColor(self, options.offScreenArrowColor[1]);
