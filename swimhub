@@ -293,7 +293,9 @@ local varsglobal = {
             Name = false,
             NameColor = Color3.new(1,1,1),
             LogoFadingOffset = 0,
-        }
+        },
+        sussy = false,
+        rainbow = false
     },
     thirdperson = false,
     thirdpdist = 0,
@@ -748,7 +750,7 @@ local luatab = Tabs.Lua:AddRightGroupbox('swimlua');
         end;
 
         text.Text = title:format(
-            readfile('swimhub/library/ver'),
+            "negero",
             math.floor(FPS),
             math.floor(game:GetService('Stats').Network.ServerStatsItem['Data Ping']:GetValue())
         );
@@ -800,8 +802,155 @@ if noadonis then
 else
     luatab:AddLabel("not available")
 end
+
 do
+    varsglobal.cursor.rainbow = false
+    varsglobal.cursor.sussy = false
+    CrosshairTab:AddToggle('crosshairenable', {
+        Text = 'enable crosshair',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.Enabled = first  
+        end
+    }):AddColorPicker('crosshaircolor', {
+        Default = Color3.new(1, 1, 1),
+        Title = 'crosshair color',
+        Transparency = 0,
+        Callback = function(Value)
+            varsglobal.cursor.Color = Value
+        end
+    })
+    CrosshairTab:AddSlider('crosshairspeed', {
+        Text = 'speed',
+        Default = 3,
+        Min = 0.1,
+        Max = 15,
+        Rounding = 1,
+        Compact = true,  
+    }):OnChanged(function(State)
+        varsglobal.cursor.Speed = State
+    end)
+    CrosshairTab:AddSlider('crosshairradius', {
+        Text = 'radius',
+        Default = 25,
+        Min = 0.1,
+        Max = 100,
+        Rounding = 1,
+        Compact = true,  
+    }):OnChanged(function(State)
+        varsglobal.cursor.Radius = State
+    end)
+    CrosshairTab:AddSlider('crosshairthickness', {
+        Text = 'thickness',
+        Default = 1.5,
+        Min = 0.1,
+        Max = 10,
+        Rounding = 1,
+        Compact = true,  
+    }):OnChanged(function(State)
+        varsglobal.cursor.Thickness = State
+    end)
+    CrosshairTab:AddSlider('crosshairgapsize', {
+        Text = 'gap',
+        Default = 5,
+        Min = 0,
+        Max = 50,
+        Rounding = 1,
+        Compact = true,  
+    }):OnChanged(function(State)
+        varsglobal.cursor.Gap = State
+    end)
+    CrosshairTab:AddToggle('crosshairenablegap', {
+        Text = 'math divide gap',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.TheGap = first  
+        end
+    })
+    CrosshairTab:AddToggle('crosshairenableoutline', {
+        Text = 'outline',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.Outline = first  
+        end
+    })
+    CrosshairTab:AddToggle('crosshairenableresize', {
+        Text = 'resize animation',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.Resize = first  
+        end
+    })
+    CrosshairTab:AddToggle('crosshairenabledot', {
+        Text = 'dot',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.Dot = first  
+        end
+    })
+    CrosshairTab:AddToggle('crosshairenablenazi', {
+        Text = 'sussy',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.sussy = first  
+        end
+    })
+    CrosshairTab:AddToggle('crosshairenablefaggot', {
+        Text = 'rainbow',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.rainbow = first  
+        end
+    })
+    CrosshairTab:AddToggle('crosshairtextLogo', {
+        Text = 'text logo',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.Text.Logo = first  
+        end
+    }):AddColorPicker('crosshairlogocolor', {
+        Default = Color3.new(1, 1, 1),
+        Title = 'logo color',
+        Transparency = 0,
+        Callback = function(Value)
+            varsglobal.cursor.Text.LogoColor = Value
+        end
+    })
+    CrosshairTab:AddToggle('crosshairtextName', {
+        Text = 'text name',
+        Default = false,  
+    
+        Callback = function(first)
+            varsglobal.cursor.Text.Name = first  
+        end
+    }):AddColorPicker('crosshairtextcolor', {
+        Default = Color3.new(1, 1, 1),
+        Title = 'text color',
+        Transparency = 0,
+        Callback = function(Value)
+            varsglobal.cursor.Text.NameColor = Value
+        end
+    })
+    CrosshairTab:AddSlider('crosshairlogooffset', {
+        Text = 'logo fade offset',
+        Default = 0,
+        Min = 0,
+        Max = 5,
+        Rounding = 1,
+        Compact = true,  
+    }):OnChanged(function(State)
+        varsglobal.cursor.Text.LogoFadingOffset = State
+    end)
     local utility = {}
+    
     -- // Functions
     function utility:new(type, properties)
         local object = Drawing.new(type)
@@ -877,7 +1026,17 @@ do
             Transparency = 1
         })
 
-        lines[i] = {line, line_outline}
+        local naziline = utility:new("Line",{
+            Visible =  true,
+            From = Vector2.new(200,500),
+            To = Vector2.new(200,500),
+            Color = varsglobal.cursor.Color,
+            Thickness = varsglobal.cursor.Thickness,
+            ZIndex = 2,
+            Transparency = 1
+        })
+
+        lines[i] = {line, line_outline, naziline}
     end
     -- // Main
     local angle = 0
@@ -889,33 +1048,24 @@ do
         end
     end
     --
-    RunService.Stepped:connect(function()
+    local pos, rainbow, rotationdegree, color = Vector2.zero, 0, 0, Color3.new()
+    local math_cos, math_atan, math_pi, math_sin = math.cos, math.atan, math.pi, math.sin
+    local function DEG2RAD(x) return x * math_pi / 180 end
+    local function RAD2DEG(x) return x * 180 / math_pi end
+    RunService.RenderStepped:Connect(function(delta)
         if varsglobal.cursor.Enabled then
-            local pos
-            if varsglobal.cursor.CustomPos then
-                pos = varsglobal.cursor.Position
-            else
-                pos = Vector2.new(game.Players.LocalPlayer:GetMouse().X, game.Players.LocalPlayer:GetMouse().Y + game:GetService("GuiService"):GetGuiInset().Y)
-            end
-            angle = angle + (1 / (varsglobal.cursor.Speed * 10))
+            rainbow = rainbow + (delta * 0.5)
+            if rainbow > 1.0 then rainbow = 0.0 end
+            color = Color3.fromHSV(rainbow, 1, 1)
+            if varsglobal.cursor.CustomPos then pos = varsglobal.cursor.Position else pos = Vector2.new(game.Players.LocalPlayer:GetMouse().X, game.Players.LocalPlayer:GetMouse().Y + game:GetService("GuiService"):GetGuiInset().Y)end
+            if varsglobal.cursor.rainbow then color = Color3.fromHSV(rainbow, 1, 1) else color = varsglobal.cursor.Color end
             if transp <= 1.5+varsglobal.cursor.Text.LogoFadingOffset and not reverse then 
-                transp = transp + (1 / (varsglobal.cursor.Speed * 10))
+                transp = transp +((varsglobal.cursor.Speed * 10) * delta)
                 if transp >= 1.5+varsglobal.cursor.Text.LogoFadingOffset then setreverse(true) end
             elseif reverse then
-                transp = transp - (1 / (varsglobal.cursor.Speed * 10))
+                transp = transp - ((varsglobal.cursor.Speed * 10) * delta)
                 if transp <= 0-varsglobal.cursor.Text.LogoFadingOffset then setreverse(false) end
             end
-            if angle >= 360 then
-                angle = 0
-            end
-            --
-            dot.Visible = varsglobal.cursor.Dot
-            dot.Color = varsglobal.cursor.Color
-            dot.Position = Vector2.new(pos.X - 1, pos.Y - 1)
-            --
-            outline.Visible = varsglobal.cursor.Outline and varsglobal.cursor.Dot
-            outline.Position = Vector2.new(pos.X - 2, pos.Y - 2)
-            --
             logotext.Position = Vector2.new(pos.X, (pos + Vector2.new(0, varsglobal.cursor.Radius + 5)).Y)
             logotext.Transparency = transp
             logotext.Visible = varsglobal.cursor.Text.Logo
@@ -924,166 +1074,92 @@ do
             text.Position = Vector2.new(pos.X, (pos + Vector2.new(0, varsglobal.cursor.Radius + (varsglobal.cursor.Text.Logo and 19 or 5))).Y)
             text.Visible = varsglobal.cursor.Text.Name
             text.Color = varsglobal.cursor.Text.NameColor
-            --
-            for index, line in pairs(lines) do
-                index = index
-                if varsglobal.cursor.Resize then
-                    x = {pos.X + (math.cos(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius + ((varsglobal.cursor.Radius * math.sin(angle)) / 9))), pos.X + (math.cos(angle + (index * (math.pi / 2))) * ( (varsglobal.cursor.Radius - 20) - (varsglobal.cursor.TheGap and (((varsglobal.cursor.Radius - 20) * math.cos(angle)) / 4) or (((varsglobal.cursor.Radius - 20) * math.cos(angle)) - 4))))}
-                    y = {pos.Y + (math.sin(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius + ((varsglobal.cursor.Radius * math.sin(angle)) / 9))), pos.Y + (math.sin(angle + (index * (math.pi / 2))) * ( (varsglobal.cursor.Radius - 20) - (varsglobal.cursor.TheGap and (((varsglobal.cursor.Radius - 20) * math.cos(angle)) / 4) or (((varsglobal.cursor.Radius - 20) * math.cos(angle)) - 4))))}
-                else
-                    x = {pos.X + (math.cos(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius)), pos.X + (math.cos(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20)-varsglobal.cursor.Gap)) ))}
-                    y = {pos.Y + (math.sin(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius)), pos.Y + (math.sin(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20)-varsglobal.cursor.Gap)) ))}
+
+            if varsglobal.cursor.sussy then
+                local frametime = delta
+                local a = varsglobal.cursor.Radius - 10
+                local gamma = math_atan(a / a)
+                
+                if rotationdegree >= 90 then rotationdegree = 0 end
+            
+                for i = 1, 4 do  
+                    local p_0 = (a * math_sin(DEG2RAD(rotationdegree + (i * 90))))
+                    local p_1 = (a * math_cos(DEG2RAD(rotationdegree + (i * 90))))
+                    local p_2 =((a / math_cos(gamma)) * math_sin(DEG2RAD(rotationdegree + (i * 90) + RAD2DEG(gamma))))
+                    local p_3 =((a / math_cos(gamma)) * math_cos(DEG2RAD(rotationdegree + (i * 90) + RAD2DEG(gamma))))
+            
+                    
+                    lines[i][1].From = Vector2.new(pos.X, pos.Y)
+                    lines[i][1].To = Vector2.new(pos.X + p_0, pos.Y - p_1)
+                    lines[i][1].Color = color
+                    lines[i][1].Thickness = varsglobal.cursor.Thickness
+                    lines[i][1].Visible = true
+                    lines[i][3].From = Vector2.new(pos.X + p_0, pos.Y - p_1)
+                    lines[i][3].To = Vector2.new(pos.X + p_2, pos.Y - p_3)
+                    lines[i][3].Color = color
+                    lines[i][3].Thickness = varsglobal.cursor.Thickness
+                    lines[i][3].Visible = true
+                end
+                rotationdegree = rotationdegree + ((varsglobal.cursor.Speed * frametime) * 1000) 
+            else
+                angle = angle + ((varsglobal.cursor.Speed * 10) * delta)
+
+                if angle >= 90 then
+                    angle = 0
                 end
                 --
-                line[1].Visible = true
-                line[1].Color = varsglobal.cursor.Color
-                line[1].From = Vector2.new(x[2], y[2])
-                line[1].To = Vector2.new(x[1], y[1])
-                line[1].Thickness = varsglobal.cursor.Thickness
+                dot.Visible = varsglobal.cursor.Dot
+                dot.Color = color
+                dot.Position = Vector2.new(pos.X - 1, pos.Y - 1)
                 --
-                line[2].Visible = varsglobal.cursor.Outline
-                line[2].From = Vector2.new(x[2], y[2])
-                line[2].To = Vector2.new(x[1], y[1])
-                line[2].Thickness = varsglobal.cursor.Thickness + 2.5
+                outline.Visible = varsglobal.cursor.Outline and varsglobal.cursor.Dot
+                outline.Position = Vector2.new(pos.X - 2, pos.Y - 2)
+                --
+
+                --
+                for index, line in pairs(lines) do
+                    index = index
+                    if varsglobal.cursor.Resize then
+                        x = {pos.X + (math.cos(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius + ((varsglobal.cursor.Radius * math.sin(angle)) / 9))), pos.X + (math.cos(angle + (index * (math.pi / 2))) * ( (varsglobal.cursor.Radius - 20) - (varsglobal.cursor.TheGap and (((varsglobal.cursor.Radius - 20) * math.cos(angle)) / 4) or (((varsglobal.cursor.Radius - 20) * math.cos(angle)) - 4))))}
+                        y = {pos.Y + (math.sin(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius + ((varsglobal.cursor.Radius * math.sin(angle)) / 9))), pos.Y + (math.sin(angle + (index * (math.pi / 2))) * ( (varsglobal.cursor.Radius - 20) - (varsglobal.cursor.TheGap and (((varsglobal.cursor.Radius - 20) * math.cos(angle)) / 4) or (((varsglobal.cursor.Radius - 20) * math.cos(angle)) - 4))))}
+                        x1 = {pos.X + (math.cos(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius+1)), pos.X + (math.cos(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20+1 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20+1)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20+1)-varsglobal.cursor.Gap)) ))}
+                        y1 = {pos.Y + (math.sin(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius+1)), pos.Y + (math.sin(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20+1 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20+1)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20+1)-varsglobal.cursor.Gap)) ))}
+                    else
+                        x = {pos.X + (math.cos(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius)), pos.X + (math.cos(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20)-varsglobal.cursor.Gap)) ))}
+                        y = {pos.Y + (math.sin(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius)), pos.Y + (math.sin(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20)-varsglobal.cursor.Gap)) ))}
+                        x1 = {pos.X + (math.cos(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius+1)), pos.X + (math.cos(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20+1 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20+1)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20+1)-varsglobal.cursor.Gap)) ))}
+                        y1 = {pos.Y + (math.sin(angle + (index * (math.pi / 2))) * (varsglobal.cursor.Radius+1)), pos.Y + (math.sin(angle + (index * (math.pi / 2))) * ( ( varsglobal.cursor.Radius - 20+1 ) - (varsglobal.cursor.TheGap and((varsglobal.cursor.Radius-20+1)/varsglobal.cursor.Gap)or((varsglobal.cursor.Radius-20+1)-varsglobal.cursor.Gap)) ))}
+                    end
+                    --
+                    line[1].Visible = true
+                    line[1].Color = color
+                    line[1].From = Vector2.new(x[2], y[2])
+                    line[1].To = Vector2.new(x[1], y[1])
+                    line[1].Thickness = varsglobal.cursor.Thickness
+                    --
+                    line[2].Visible = varsglobal.cursor.Outline
+                    line[2].From = Vector2.new(x1[2], y1[2])
+                    line[2].To = Vector2.new(x1[1], y1[1])
+                    line[2].Thickness = varsglobal.cursor.Thickness + 2.5
+
+                    line[3].Visible = false
+                end
             end
         else
             dot.Visible = false
             outline.Visible = false
+            logotext.Visible = false
+            text.Visible = false
             --
             for index, line in pairs(lines) do
                 line[1].Visible = false
                 line[2].Visible = false
+                line[3].Visible = false
             end
         end
     end)
 end
-CrosshairTab:AddToggle('crosshairenable', {
-    Text = 'enable crosshair',
-    Default = false,  
 
-    Callback = function(first)
-        varsglobal.cursor.Enabled = first  
-    end
-}):AddColorPicker('crosshaircolor', {
-    Default = Color3.new(1, 1, 1),
-    Title = 'crosshair color',
-    Transparency = 0,
-    Callback = function(Value)
-        varsglobal.cursor.Color = Value
-    end
-})
-CrosshairTab:AddSlider('crosshairspeed', {
-    Text = 'speed',
-    Default = 3,
-    Min = 0.1,
-    Max = 10,
-    Rounding = 1,
-    Compact = true,  
-}):OnChanged(function(State)
-    varsglobal.cursor.Speed = State
-end)
-CrosshairTab:AddSlider('crosshairradius', {
-    Text = 'radius',
-    Default = 25,
-    Min = 0.1,
-    Max = 100,
-    Rounding = 1,
-    Compact = true,  
-}):OnChanged(function(State)
-    varsglobal.cursor.Radius = State
-end)
-CrosshairTab:AddSlider('crosshairthickness', {
-    Text = 'thickness',
-    Default = 1.5,
-    Min = 0.1,
-    Max = 10,
-    Rounding = 1,
-    Compact = true,  
-}):OnChanged(function(State)
-    varsglobal.cursor.Thickness = State
-end)
-CrosshairTab:AddSlider('crosshairgapsize', {
-    Text = 'gap',
-    Default = 5,
-    Min = 0,
-    Max = 50,
-    Rounding = 1,
-    Compact = true,  
-}):OnChanged(function(State)
-    varsglobal.cursor.Gap = State
-end)
-CrosshairTab:AddToggle('crosshairenablegap', {
-    Text = 'math divide gap',
-    Default = false,  
-
-    Callback = function(first)
-        varsglobal.cursor.TheGap = first  
-    end
-})
-CrosshairTab:AddToggle('crosshairenableoutline', {
-    Text = 'outline',
-    Default = false,  
-
-    Callback = function(first)
-        varsglobal.cursor.Outline = first  
-    end
-})
-CrosshairTab:AddToggle('crosshairenableresize', {
-    Text = 'resize animation',
-    Default = false,  
-
-    Callback = function(first)
-        varsglobal.cursor.Resize = first  
-    end
-})
-CrosshairTab:AddToggle('crosshairenabledot', {
-    Text = 'dot',
-    Default = false,  
-
-    Callback = function(first)
-        varsglobal.cursor.Dot = first  
-    end
-})
-CrosshairTab:AddToggle('crosshairtextLogo', {
-    Text = 'text logo',
-    Default = false,  
-
-    Callback = function(first)
-        varsglobal.cursor.Text.Logo = first  
-    end
-}):AddColorPicker('crosshairlogocolor', {
-    Default = Color3.new(1, 1, 1),
-    Title = 'logo color',
-    Transparency = 0,
-    Callback = function(Value)
-        varsglobal.cursor.Text.LogoColor = Value
-    end
-})
-CrosshairTab:AddToggle('crosshairtextName', {
-    Text = 'text name',
-    Default = false,  
-
-    Callback = function(first)
-        varsglobal.cursor.Text.Name = first  
-    end
-}):AddColorPicker('crosshairtextcolor', {
-    Default = Color3.new(1, 1, 1),
-    Title = 'text color',
-    Transparency = 0,
-    Callback = function(Value)
-        varsglobal.cursor.Text.NameColor = Value
-    end
-})
-CrosshairTab:AddSlider('crosshairlogooffset', {
-    Text = 'logo fade offset',
-    Default = 0,
-    Min = 0,
-    Max = 5,
-    Rounding = 1,
-    Compact = true,  
-}):OnChanged(function(State)
-    varsglobal.cursor.Text.LogoFadingOffset = State
-end)
 
 WorldTab:AddToggle('nograsss', {
     Text = 'no grass',
@@ -2429,6 +2505,7 @@ end
 if game.PlaceId == 3297964905 then
     pcall(function()
         local ohio = othergames.entrentch
+        
         local Ohio = Tabs.Main:AddLeftGroupbox("Weaponry")
         local function GetClosest()
             local Target = nil
@@ -2453,6 +2530,7 @@ if game.PlaceId == 3297964905 then
             end
             return Target
         end
+
         Ohio:AddToggle('silenw22', {
             Text = 'silent aim',
             Default = false,  
@@ -2462,6 +2540,7 @@ if game.PlaceId == 3297964905 then
                 ohio.silentaim = first
             end
         })
+        
         Ohio:AddToggle('silenw212', {
             Text = 'team check',
             Default = false,  
@@ -2591,6 +2670,14 @@ if game.PlaceId == 3297964905 then
             end
             return Matches >= RayMethod.ArgCountRequired
         end
+        ohio.wallnigger = false
+        Ohio:AddToggle('wallnigger', {
+            Text = 'wallnigger aim',
+            Default = false,
+            Callback = function(first)
+                ohio.wallnigger = first
+            end
+        })
         local oldNamecall
         oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
             local Method = getnamecallmethod()
@@ -2599,12 +2686,27 @@ if game.PlaceId == 3297964905 then
             if ohio.silentaim and self == workspace and not checkcaller() and Method == "Raycast" then
                 if ValidateArguments(Arguments, ExpectedArguments.Raycast) then
                     local A_Origin = Arguments[2]
-                
+                    
                     local HitPart = Target
                     
                     if HitPart then
                         local LOL1, LOL2, LOL3 = HitPart.Position.X, HitPart.Position.Y, HitPart.Position.Z
                         Arguments[3] = getDirection(A_Origin, Vector3.new(LOL1 + (math.random(1,9999) / 10000000 - math.random(1,9999) / 10000000), LOL2 + (math.random(1,9999) / 10000000 - math.random(1,9999) / 100000000), LOL3 + (math.random(1,9999) / 100000000 - math.random(1,9999) / 100000000)))
+                        if ohio.wallnigger then
+                            local raycastParams = Arguments[4]
+                            local FilterDescendantsInstances = {HitPart.Parent}
+                            local FilterType = Enum.RaycastFilterType.Whitelist
+                            local IgnoreWater = raycastParams.IgnoreWater
+                            local CollisionGroup = raycastParams.CollisionGroup
+                            Arguments[4] = RaycastParams.new(
+                                {
+                                    FilterDescendantsInstances = FilterDescendantsInstances,
+                                    FilterType = FilterType,
+                                    IgnoreWater = IgnoreWater,
+                                    CollisionGroup = CollisionGroup
+                                }
+                            )
+                        end
                         return oldNamecall(unpack(Arguments))
                     end
                 end
@@ -4871,10 +4973,8 @@ if game.PlaceId == 7239319209 then
             wrap(function()
                 while ohio.moneyaura do
                     for _, v in pairs(game:GetService("Workspace").Game.Entities.CashBundle:GetChildren()) do
-                        for  _, v1 in pairs(v:GetChildren()) do
-                            if v1.ClassName == "ClickDetector" and (v1.Parent.Position - plr.Character.HumanoidRootPart.Position).magnitude <= 40 then
-                                fireclickdetector(v1, 0)
-                            end
+                        if plr.Character and plr.Character.HumanoidRootPart and v:FindFirstChildOfClass("ClickDetector") and (v:FindFirstChildOfClass("Part").Position - plr.Character.HumanoidRootPart.Position).magnitude <= 40 then
+                            fireclickdetector(v:FindFirstChildOfClass("ClickDetector"), 0)
                         end
                     end
                     wait()
@@ -4886,7 +4986,7 @@ if game.PlaceId == 7239319209 then
                 while ohio.itempick do
                     for _, v in pairs(game:GetService("Workspace").Game.Entities.ItemPickup:GetChildren()) do
                         for  _, v1 in pairs(v:GetChildren()) do
-                            if v1:FindFirstChildOfClass("ClickDetector") and (v1.Position - plr.Character.HumanoidRootPart.Position).magnitude <= 40 then
+                            if plr.Character and plr.Character.HumanoidRootPart and v1:FindFirstChildOfClass("ClickDetector") and (v1.Position - plr.Character.HumanoidRootPart.Position).magnitude <= 40 then
                                 fireclickdetector(v1:FindFirstChildOfClass("ClickDetector"), 0)
                             end
                         end
@@ -5041,6 +5141,7 @@ if game.PlaceId == 7239319209 then
                 ohio.silentaim = first
             end
         })
+        
         Ohio:AddDropdown('SilentAimHitPartjb', {
             Values = {'HumanoidRootPart', 'Head'},
             Default = 1,
@@ -5161,6 +5262,15 @@ if game.PlaceId == 7239319209 then
             end
             return Matches >= RayMethod.ArgCountRequired
         end
+        ohio.wallnigger = false
+        Ohio:AddToggle('wallnigger', {
+            Text = 'wallnigger aim',
+            Default = false,
+            Callback = function(first)
+                ohio.wallnigger = first
+            end
+        })
+
         local oldNamecall
         oldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
             local Method = getnamecallmethod()
@@ -5173,6 +5283,21 @@ if game.PlaceId == 7239319209 then
                     local HitPart = Target
                     if HitPart then
                         Arguments[3] = getDirection(A_Origin, HitPart.Position)
+                        if ohio.wallnigger then
+                            local raycastParams = Arguments[4]
+                            local FilterDescendantsInstances = {HitPart.Parent}
+                            local FilterType = Enum.RaycastFilterType.Include
+                            local IgnoreWater = raycastParams.IgnoreWater
+                            local CollisionGroup = raycastParams.CollisionGroup
+                            Arguments[4] = RaycastParams.new(
+                                {
+                                    FilterDescendantsInstances = FilterDescendantsInstances,
+                                    FilterType = FilterType,
+                                    IgnoreWater = IgnoreWater,
+                                    CollisionGroup = CollisionGroup
+                                }
+                            )
+                        end
                         return oldNamecall(unpack(Arguments))
                     end
                 end
