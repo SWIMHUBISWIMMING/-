@@ -1,6 +1,7 @@
 ## swimhub💧
 **Free Open Source and Paid Closed Source with more quality**
-[Join our Discord!](https://discord.com/invite/25EN7SNAxr "Join our Discord!")
+
+[Join our Discord!](https://discord.com/invite/swimhub "Join our Discord!")
 
 ## License
 
