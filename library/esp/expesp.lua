@@ -285,7 +285,7 @@ function EspObject:Render()
 		name.Transparency = options.nameColor[2];
 		name.Outline = options.nameOutline;
 		name.OutlineColor = parseColor(self, options.nameOutlineColor, true);
-		name.Position = (corners.topLeft + corners.topRight)*0.5 - Vector2.yAxis*name.TextBounds.Y;
+		name.Position = (corners.topLeft + corners.topRight)*0.5 - Vector2.yAxis*name.TextBounds.Y - (NAME_OFFSET + Vector2.new(0,interface.sharedSettings.textSize));
 	end
 
 	visible.box.Visible = enabled and onScreen and options.box;
