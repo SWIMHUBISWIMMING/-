@@ -221,9 +221,11 @@ function EspObject:Update()
 		return;
 	end
 
-	local _, onScreen, depth = worldToScreen(head.Position);
+	local _, onScreen = worldToScreen(head.Position);
 	self.onScreen = onScreen;
-	self.distance = depth;
+	if camera then
+		self.distance = (camera.CFrame.p - head.Position).Magnitude;
+	end
 
 	if interface.sharedSettings.limitDistance and depth > interface.sharedSettings.maxDistance then
 		self.onScreen = false;
