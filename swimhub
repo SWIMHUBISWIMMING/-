@@ -1016,7 +1016,7 @@ do
             rainbow = rainbow + (delta * 0.5)
             if rainbow > 1.0 then rainbow = 0.0 end
             color = Color3.fromHSV(rainbow, 1, 1)
-            if varsglobal.cursor.CustomPos then pos = varsglobal.cursor.Position else pos = Vector2.new(game.Players.LocalPlayer:GetMouse().X, game.Players.LocalPlayer:GetMouse().Y + game:GetService("GuiService"):GetGuiInset().Y)end
+            if varsglobal.cursor.CustomPos then pos = varsglobal.cursor.Position else pos = Vector2.new(plrs.LocalPlayer:GetMouse().X, plrs.LocalPlayer:GetMouse().Y + game:GetService("GuiService"):GetGuiInset().Y)end
             if varsglobal.cursor.rainbow then color = Color3.fromHSV(rainbow, 1, 1) else color = varsglobal.cursor.Color end
             if transp <= 1.5+varsglobal.cursor.Text.LogoFadingOffset and not reverse then 
                 transp = transp +((varsglobal.cursor.Speed * 10) * delta)
@@ -3358,7 +3358,7 @@ if game.PlaceId == 10433018628 then
             wrap(function()
                 while hoodlegends.moneyaura do
                     for i, v in pairs(game:GetService("Workspace"):GetChildren()) do
-                        if v:FindFirstChildWhichIsA("ClickDetector") and (v.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).magnitude <= 40 * hoodlegends.moneyauradist then
+                        if v:FindFirstChildWhichIsA("ClickDetector") and (v.Position - plrs.LocalPlayer.Character.HumanoidRootPart.Position).magnitude <= 40 * hoodlegends.moneyauradist then
                             fireclickdetector(v.ClickDetector, 0)
                         end
                     end
@@ -5193,10 +5193,10 @@ if game.PlaceId == 1962086868 then
             end)
             TowerOfHell:AddButton('godmode', function()
                 local function f()
-                    game.Players.LocalPlayer.Character.KillScript:Destroy()
+                    plrs.LocalPlayer.Character.KillScript:Destroy()
                 end
                 hookfunction(f, function()
-                    game.Players.LocalPlayer.Character.KillScript:Destroy()
+                    plrs.LocalPlayer.Character.KillScript:Destroy()
                 end)
                 f()
             end)
