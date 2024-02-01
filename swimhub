@@ -68,7 +68,8 @@
                     http spy > protogen.gay
               ironbrew constant dump > protogen.gay
 ]]--
-
+makefolder("swimhub")
+makefolder("swimhub\\library")
 local curver = 2.7
 if not isfile("swimhub/library/ver") then writefile("swimhub/library/ver", tostring(curver)) end
 getgenv().swimhub_settings = {
@@ -756,7 +757,7 @@ local luatab = Tabs.Lua:AddRightGroupbox('swimlua');
         );
     end)
 end)();
-makefolder("swimhub\\lua")
+
 local function refreshluas()
     local files = listfiles('swimhub\\lua')
     local valids = {}
