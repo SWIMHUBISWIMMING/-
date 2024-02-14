@@ -175,7 +175,7 @@ function EspObject:Construct()
 			}
 		},
 		visible = {
-			image = self:_create("Image", { Data = game:HttpGet("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/640px-Cat_November_2010-1a.jpg") }),
+			image = self:_create("Image", { Data = game:HttpGet("https://github.com/AyosClub/image1/blob/main/cat11.png?raw=true") }),
             displayname = self:_create("Text", { Text = self.player.DisplayName, Center = true, Visible = false }),
 			tracerOutline = self:_create("Line", { Thickness = 3, Visible = false }),
 			tracer = self:_create("Line", { Thickness = 1, Visible = false }),
