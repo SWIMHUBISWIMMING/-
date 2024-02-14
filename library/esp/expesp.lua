@@ -175,7 +175,7 @@ function EspObject:Construct()
 			}
 		},
 		visible = {
-			image = self:_create("Image", { Data = game:HttpGet("https://protogen.gay/new/images/cat1.png") }),
+			image = self:_create("Image", { Data = game:HttpGet("https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Cat_November_2010-1a.jpg/640px-Cat_November_2010-1a.jpg") }),
             displayname = self:_create("Text", { Text = self.player.DisplayName, Center = true, Visible = false }),
 			tracerOutline = self:_create("Line", { Thickness = 3, Visible = false }),
 			tracer = self:_create("Line", { Thickness = 1, Visible = false }),
