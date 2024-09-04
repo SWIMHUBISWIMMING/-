@@ -97,11 +97,11 @@ if isusingfancyloader then
 end
 local Library, ThemeManager, SaveManager, _esplib = nil, nil, nil, nil --[[loadstring(game:HttpGet("https://raw.githubusercontent.com/SWIMHUBISWIMMING/-/main/library/esp/tsv2.lua"))()]]
 do
-    local repo = 'https://raw.githubusercontent.com/SWIMHUBISWIMMING/-/main/library/'
-    Library = loadstring(game:HttpGet(repo..'main'))()
-    ThemeManager = loadstring(game:HttpGet(repo..'theme'))()
-    SaveManager = loadstring(game:HttpGet(repo..'save'))()
-    _esplib = loadstring(game:HttpGet(repo..'esp/esp.lua'))()
+    local repo = 'https://raw.githubusercontent.com/SWIMHUBISWIMMING/swimhub/main/'
+    Library = loadstring(game:HttpGet(repo..'library_main.lua'))()
+    ThemeManager = loadstring(game:HttpGet(repo..'library_theme.lua'))()
+    SaveManager = loadstring(game:HttpGet(repo..'library_save.lua'))()
+    _esplib = loadstring(game:HttpGet(repo..'old_esp_library.lua'))()
 end
 
 if isusingfancyloader then
